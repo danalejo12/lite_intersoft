@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block titulo %}Iniciar sesión{% endblock %}
+
+{% block cuerpo %}
+    <main class="login-pagina">
+        <div class="login-tarjeta">
+            <div class="login-interior">
+                <div class="logo">IS</div>
+                <h1>Bienvenido a <span class="titulo-gradiente">InterSoft Lite</span></h1>
+                <p class="subtitulo">Inicia sesión para continuar</p>
+
+                {% if form.non_field_errors %}
+                    <div class="errores-generales">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+
+                    <div class="campo-flotante">
+                        <input type="text" name="username" id="id_username"
+                               value="{{ form.username.value|default:'' }}"
+                               placeholder=" " autocomplete="username" required autofocus>
+                        <label for="id_username">Usuario</label>
+                    </div>
+
+                    <div class="campo-flotante">
+                        <input type="password" name="password" id="id_password"
+                               placeholder=" " autocomplete="current-password" required>
+                        <label for="id_password">Contraseña</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-bloque">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}

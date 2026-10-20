@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Inicio{% endblock %} | InterSoft Lite</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+
+    <div class="fondo-animado" aria-hidden="true">
+        <span></span><span></span><span></span>
+    </div>
+
+    {% if user.is_authenticated %}
+        {% with nombre_url=request.resolver_match.url_name %}
+        <nav class="navbar">
+            <a href="{% url 'inicio' %}" class="marca">
+                <span class="logo">IS</span>
+                <span>InterSoft <strong>Lite</strong></span>
+            </a>
+
+            <button class="menu-toggle" type="button" aria-label="Abrir menú" data-menu-toggle>☰</button>
+
+            <div class="nav-links" data-menu>
+                <a href="{% url 'inicio' %}" class="{% if nombre_url == 'inicio' %}activo{% endif %}">Inicio</a>
+                <a href="{% url 'producto_lista' %}" class="{% if 'producto' in nombre_url %}activo{% endif %}">Productos</a>
+                <a href="{% url 'categoria_lista' %}" class="{% if 'categoria' in nombre_url %}activo{% endif %}">Categorías</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}">Admin</a>
+                {% endif %}
+
+                <div class="usuario">
+                    <span class="avatar">{{ user.get_username|first }}</span>
+                    <span>{{ user.get_username }}</span>
+                    <form method="post" action="{% url 'logout' %}" class="form-logout">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-ghost btn-sm">Salir</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        {% endwith %}
+    {% endif %}
+
+    {% if messages %}
+        <div class="toasts">
+            {% for mensaje in messages %}
+                <div class="toast {{ mensaje.tags }}" role="status">
+                    <span class="toast-icono">
+                        {% if mensaje.tags == "success" %}✅{% elif mensaje.tags == "error" %}❌{% elif mensaje.tags == "warning" %}⚠️{% else %}ℹ️{% endif %}
+                    </span>
+                    <span>{{ mensaje }}</span>
+                    <button type="button" class="toast-cerrar" aria-label="Cerrar">×</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block cuerpo %}
+        <main class="contenedor">
+            {% block contenido %}{% endblock %}
+        </main>
+    {% endblock %}
+
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

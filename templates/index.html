@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block titulo %}Inicio{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado">
+        <div>
+            <h1 class="titulo-gradiente">Hola, {{ user.first_name|default:user.get_username }} 👋</h1>
+            <p class="subtitulo">Este es el resumen de tu inventario.</p>
+        </div>
+    </div>
+
+    <section class="stats">
+        <div class="stat spotlight" data-tilt>
+            <div class="stat-icono">📦</div>
+            <div class="stat-numero" data-contador="{{ total_productos }}">{{ total_productos }}</div>
+            <div class="stat-label">Productos activos</div>
+        </div>
+
+        <div class="stat spotlight" data-tilt>
+            <div class="stat-icono">🏷️</div>
+            <div class="stat-numero" data-contador="{{ total_categorias }}">{{ total_categorias }}</div>
+            <div class="stat-label">Categorías activas</div>
+        </div>
+
+        <div class="stat spotlight {% if stock_bajo %}alerta{% endif %}" data-tilt>
+            <div class="stat-icono">⚠️</div>
+            <div class="stat-numero" data-contador="{{ stock_bajo }}">{{ stock_bajo }}</div>
+            <div class="stat-label">Con stock bajo</div>
+        </div>
+    </section>
+
+    <section class="accesos">
+        <a href="{% url 'producto_crear' %}" class="acceso">
+            <span>➕</span><span>Registrar producto</span>
+        </a>
+        <a href="{% url 'categoria_crear' %}" class="acceso">
+            <span>🗂️</span><span>Nueva categoría</span>
+        </a>
+        <a href="{% url 'producto_lista' %}" class="acceso">
+            <span>📋</span><span>Ver inventario</span>
+        </a>
+    </section>
+
+    <section class="tarjeta spotlight">
+        <h2 class="seccion-titulo">Últimos productos registrados</h2>
+
+        {% if ultimos_productos %}
+            <div class="tabla-contenedor">
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th class="numero">Precio venta</th>
+                            <th class="numero">Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in ultimos_productos %}
+                            <tr>
+                                <td><span class="sku">{{ producto.sku }}</span></td>
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.categoria }}</td>
+                                <td class="numero">$ {{ producto.precio_venta }}</td>
+                                <td class="numero {% if producto.stock <= producto.stock_minimo %}stock-bajo{% endif %}">
+                                    {{ producto.stock }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="vacio">
+                <span class="vacio-icono">📭</span>
+                Aún no hay productos registrados.
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

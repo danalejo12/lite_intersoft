@@ -1,0 +1,37 @@
+{% comment %}
+    Campos de un formulario con el estilo de la aplicación.
+    Se usa con: {% include "products/_campos.html" %}
+{% endcomment %}
+
+{% if formulario.non_field_errors %}
+    <div class="errores-generales">
+        {% for error in formulario.non_field_errors %}
+            <div>{{ error }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="grid-campos">
+    {% for campo in formulario %}
+        {% if campo.widget_type == "checkbox" %}
+            <div class="campo campo-check ancho">
+                <label class="switch">
+                    {{ campo }}
+                    <span class="slider"></span>
+                </label>
+                <span>{{ campo.label }}</span>
+            </div>
+        {% else %}
+            <div class="campo{% if campo.errors %} con-error{% endif %}" style="animation-delay: {{ forloop.counter0 }}00ms">
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+                {{ campo }}
+                {% if campo.help_text %}
+                    <small class="ayuda">{{ campo.help_text }}</small>
+                {% endif %}
+                {% for error in campo.errors %}
+                    <small class="error">{{ error }}</small>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block titulo %}Desactivar producto{% endblock %}
+
+{% block contenido %}
+    <section class="tarjeta confirmacion">
+        <div class="icono-alerta">🗑️</div>
+        <h1>¿Desactivar este producto?</h1>
+        <p class="subtitulo">
+            <span class="sku">{{ producto.sku }}</span> {{ producto.nombre }}
+        </p>
+        <p class="subtitulo">
+            El producto dejará de estar disponible, pero se conservará su historial de ventas y movimientos.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="acciones-form">
+                <a href="{% url 'producto_lista' %}" class="btn btn-ghost">Cancelar</a>
+                <button type="submit" class="btn btn-peligro">Sí, desactivar</button>
+            </div>
+        </form>
+    </section>
+{% endblock %}

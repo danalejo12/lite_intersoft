@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block titulo %}Productos{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado">
+        <div>
+            <h1 class="titulo-gradiente">Productos</h1>
+            <p class="subtitulo">Inventario completo de la tienda.</p>
+        </div>
+        {% if perms.core.add_producto %}
+            <a href="{% url 'producto_crear' %}" class="btn">➕ Nuevo producto</a>
+        {% endif %}
+    </div>
+
+    <section class="tarjeta spotlight">
+        {% if productos %}
+            <div class="barra-herramientas">
+                <div class="buscador">
+                    <input type="search" placeholder="Buscar por nombre, SKU o categoría..." data-filtro="tabla-productos">
+                </div>
+                <span class="contador-resultados" data-contador-de="tabla-productos">
+                    {{ productos|length }} de {{ productos|length }}
+                </span>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table class="tabla" id="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>SKU</th>
+                            <th>Nombre</th>
+                            <th>Categoría</th>
+                            <th class="numero">Precio compra</th>
+                            <th class="numero">Precio venta</th>
+                            <th class="numero">Stock</th>
+                            <th>Estado</th>
+                            <th class="acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                            <tr class="{% if not producto.activo %}fila-inactiva{% endif %}">
+                                <td><span class="sku">{{ producto.sku }}</span></td>
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.categoria }}</td>
+                                <td class="numero">$ {{ producto.precio_compra }}</td>
+                                <td class="numero">$ {{ producto.precio_venta }}</td>
+                                <td class="numero {% if producto.stock <= producto.stock_minimo %}stock-bajo{% endif %}"
+                                    title="Stock mínimo: {{ producto.stock_minimo }}">
+                                    {{ producto.stock }}
+                                </td>
+                                <td>
+                                    {% if producto.activo %}
+                                        <span class="badge activo">Activo</span>
+                                    {% else %}
+                                        <span class="badge inactivo">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                                <td class="acciones">
+                                    {% if perms.core.change_producto %}
+                                        <a href="{% url 'producto_editar' producto.pk %}" class="btn btn-ghost btn-sm">✏️ Editar</a>
+                                    {% endif %}
+                                    {% if perms.core.delete_producto and producto.activo %}
+                                        <a href="{% url 'producto_eliminar' producto.pk %}" class="btn btn-peligro btn-sm">🗑️</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="vacio">
+                <span class="vacio-icono">📦</span>
+                No hay productos registrados todavía.
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

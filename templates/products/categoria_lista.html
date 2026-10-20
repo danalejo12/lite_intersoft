@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block titulo %}Categorías{% endblock %}
+
+{% block contenido %}
+    <div class="encabezado">
+        <div>
+            <h1 class="titulo-gradiente">Categorías</h1>
+            <p class="subtitulo">Organiza tus productos por categorías.</p>
+        </div>
+        {% if perms.core.add_categoria %}
+            <a href="{% url 'categoria_crear' %}" class="btn">➕ Nueva categoría</a>
+        {% endif %}
+    </div>
+
+    <section class="tarjeta spotlight">
+        {% if categorias %}
+            <div class="barra-herramientas">
+                <div class="buscador">
+                    <input type="search" placeholder="Buscar categoría..." data-filtro="tabla-categorias">
+                </div>
+                <span class="contador-resultados" data-contador-de="tabla-categorias">
+                    {{ categorias|length }} de {{ categorias|length }}
+                </span>
+            </div>
+
+            <div class="tabla-contenedor">
+                <table class="tabla" id="tabla-categorias">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th class="acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                            <tr class="{% if not categoria.activo %}fila-inactiva{% endif %}">
+                                <td><strong>{{ categoria.nombre }}</strong></td>
+                                <td>{{ categoria.descripcion|default:"—"|truncatechars:60 }}</td>
+                                <td>
+                                    {% if categoria.activo %}
+                                        <span class="badge activo">Activa</span>
+                                    {% else %}
+                                        <span class="badge inactivo">Inactiva</span>
+                                    {% endif %}
+                                </td>
+                                <td class="acciones">
+                                    {% if perms.core.change_categoria %}
+                                        <a href="{% url 'categoria_editar' categoria.pk %}" class="btn btn-ghost btn-sm">✏️ Editar</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="vacio">
+                <span class="vacio-icono">🏷️</span>
+                No hay categorías registradas todavía.
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
